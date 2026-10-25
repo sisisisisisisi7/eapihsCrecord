@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45151f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="description"
+      content="School portal sign in and account registration."
+      data-brand-description="loginDescription"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title data-brand-title="loginPageTitle">EAPIHS Portal | Sign in</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="branding-config.js" defer></script>
+    <script src="branding.js" defer></script>
+    <script src="integrations-config.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="app.js" defer></script>
+    <script src="pwa.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="school-brand" href="#main" data-brand-aria="homeLabel">
+          <span class="school-seal" data-brand-logo aria-hidden="true">EAPIHS</span>
+          <span class="school-copy">
+            <strong data-brand="fullName">Emilia Ambalada Poblete Integrated Highschool</strong>
+            <span data-brand="productName">School Management &amp; Grading System</span>
+          </span>
+        </a>
+        <span class="portal-label"><span class="status-dot"></span> <span data-brand="portalTitle">EAPIHS Portal</span></span>
+      </header>
+
+      <main id="main" class="main-content">
+        <section class="auth-card" aria-labelledby="portal-title">
+          <div class="card-heading">
+            <span class="card-version">PORTAL ACCESS</span>
+            <div class="large-seal" data-brand-logo aria-hidden="true">EAPIHS</div>
+            <p class="eyebrow" data-brand="appName">EAPIHS</p>
+            <h1 id="portal-title" data-brand="portalTitle">EAPIHS Portal</h1>
+            <p class="school-full-name" data-brand="fullName">Emilia Ambalada Poblete Integrated Highschool</p>
+          </div>
+
+          <div class="card-body">
+            <div class="notice" role="note">
+              <span class="notice-mark" aria-hidden="true">i</span>
+              <p><strong>Welcome.</strong> Sign in to continue to your school account.</p>
+            </div>
+
+            <form id="auth-form" novalidate>
+              <div class="field-group" id="name-field" hidden>
+                <label for="full-name">FULL NAME (SURNAME FIRST)</label>
+                <input id="full-name" name="name" type="text" autocomplete="name" aria-describedby="full-name-hint" placeholder="Surname, First, Middle Name" />
+                <span class="field-hint" id="full-name-hint">Enter your surname first, followed by your first and middle names. Example: Dela Cruz, Juan Miguel Santos.</span>
+              </div>
+
+              <div class="field-group" id="lrn-field" hidden>
+                <label for="lrn">LEARNER REFERENCE NUMBER (LRN)</label>
+                <input id="lrn" name="lrn" type="text" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" aria-describedby="lrn-hint" placeholder="12-digit LRN" />
+                <span class="field-hint" id="lrn-hint">Enter the 12-digit LRN of the student. It will be used to create the QR code.</span>
+              </div>
+
+              <div class="field-group" id="lrn-confirm-field" hidden>
+                <label for="lrn-confirm">CONFIRM LEARNER REFERENCE NUMBER</label>
+                <input id="lrn-confirm" name="lrn-confirm" type="text" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" placeholder="Re-enter 12-digit LRN" />
+              </div>
+
+              <div class="field-group" id="school-id-field" hidden>
+                <label for="school-id-image">SCHOOL ID IMAGE (REQUIRED)</label>
+                <input id="school-id-image" name="school-id-image" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="school-id-hint" />
+                <span class="field-hint" id="school-id-hint">Upload a clear School ID image (JPEG, PNG, or WebP). It will be stored privately for administrator review. File validation does not verify that the ID is genuine, and signup does not wait for administrator approval. Maximum 550 KB after compression.</span>
+                <img id="school-id-preview" alt="School ID image preview" hidden />
+              </div>
+
+              <div class="field-group" id="school-id-consent-field" hidden>
+                <label>
+                  <input id="school-id-consent" name="school-id-consent" type="checkbox" />
+                  I agree to store my School ID image privately for administrator review.
+                </label>
+              </div>
+
+              <div class="field-group" id="verification-code-field" hidden>
+                <label for="verification-code">EMAIL VERIFICATION CODE</label>
+                <input id="verification-code" name="verification-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit code" />
+                <span class="field-hint">Check your email and enter the 6-digit verification code.</span>
+              </div>
+
+              <div class="field-group">
+                <label for="email">EMAIL ADDRESS</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="teacher@eapihs.edu.ph"
+                  required
+                />
+              </div>
+
+              <div class="field-group" id="role-field" hidden>
+                <label for="role">ACCOUNT TYPE</label>
+                <select id="role" name="role">
+                  <option value="student">Student</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="password" id="password-label">SECURE PIN / PASSWORD</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <button class="primary-button" id="submit-button" type="submit">
+                <span class="button-arrow" aria-hidden="true">&#10140;</span>
+                <span id="submit-label">Secure Login</span>
+              </button>
+              <button id="install-app" class="text-button" type="button" hidden>Install EAPIHS App</button>
+              <p class="field-hint" id="install-app-hint">On Android Chrome, use Install App when it appears. On iPhone/iPad Safari, tap Share &gt; Add to Home Screen. The website must be published over HTTPS.</p>
+              <button id="forgot-password" class="text-button" type="button">Forgot password?</button>
+              <button id="resend-code" class="text-button" type="button" hidden>Send a new code</button>
+            </form>
+
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+
+            <div class="mode-switch">
+              <span id="mode-prompt">Don't have an account yet?</span>
+              <button id="mode-toggle" class="text-button" type="button">Sign up</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span data-brand="copyright">&copy; 2026 Emilia Ambalada Poblete Integrated Highschool</span>
+        <span class="footer-accent" data-brand="tagline">Learning with purpose. Growing together.</span>
+      </footer>
+    </div>
+  </body>
+</html>

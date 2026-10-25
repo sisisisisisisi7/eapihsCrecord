@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45151f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title data-brand-title="studentPageTitle">Student Portal | EAPIHS</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="student.css?v=20261040" />
+    <script src="branding-config.js" defer></script>
+    <script src="branding.js" defer></script>
+    <script src="integrations-config.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="storage.js" defer></script>
+    <script src="student.js?v=20261040" defer></script>
+    <script src="pwa.js" defer></script>
+  </head>
+  <body hidden>
+    <div class="page-shell student-shell">
+      <header class="topbar student-topbar">
+        <a class="school-brand" href="student.html" data-brand-aria="studentPortal">
+          <span class="school-seal" data-brand-logo aria-hidden="true">EAPIHS</span>
+          <span class="school-copy">
+            <strong data-brand="fullName">Emilia Ambalada Poblete Integrated Highschool</strong>
+            <span data-brand="studentPortal">Student Portal</span>
+          </span>
+        </a>
+        <button class="signout-link student-settings-trigger" id="student-open-settings" type="button">Settings</button>
+      </header>
+
+      <main class="student-main">
+        <div id="student-home-view">
+        <section class="student-profile" aria-labelledby="student-name">
+          <p class="student-eyebrow">STUDENT RECORD</p>
+          <h1 id="student-name">Student</h1>
+          <p>LRN: <strong id="student-lrn">—</strong></p>
+        </section>
+
+        <div class="student-grid">
+          <section class="student-panel qr-panel" aria-labelledby="qr-title">
+            <p class="student-eyebrow">MY QR CODE</p>
+            <h2 id="qr-title">Class identification</h2>
+            <div class="qr-frame">
+              <canvas id="student-qr" width="280" height="280" aria-label="Student LRN QR code"></canvas>
+            </div>
+            <p class="qr-value" id="student-qr-value"></p>
+            <button class="student-action" id="download-qr" type="button">Download QR</button>
+          </section>
+
+          <section class="student-panel join-panel" aria-labelledby="join-title">
+            <p class="student-eyebrow">JOIN A CLASS</p>
+            <h2 id="join-title">Enter Section ID</h2>
+            <form id="join-section-form">
+              <label for="section-id">SECTION ID</label>
+              <input id="section-id" type="text" maxlength="30" placeholder="SECTION-10A-ABC123" required />
+              <button class="student-action" type="submit">Join Section</button>
+            </form>
+            <p class="student-status" id="join-status" role="status" aria-live="polite"></p>
+            <h3>My Sections</h3>
+            <ul class="student-section-list" id="student-section-list"></ul>
+          </section>
+          <section class="student-panel notification-panel" aria-labelledby="notification-title">
+            <p class="student-eyebrow">REQUIREMENTS</p>
+            <h2 id="notification-title">Due dates and alerts</h2>
+            <ul class="student-notification-list" id="student-notification-list"></ul>
+            <p class="student-empty-state" id="student-notification-empty">No incomplete or upcoming activities.</p>
+          </section>
+          <section class="student-panel student-chat-panel" aria-labelledby="student-chat-title">
+            <p class="student-eyebrow">SECTION COMMUNICATION</p>
+            <h2 id="student-chat-title">Section Group Chat</h2>
+            <label for="student-chat-section">SECTION</label>
+            <select id="student-chat-section"></select>
+            <ul class="section-chat-messages" id="student-chat-messages" aria-live="polite"></ul>
+            <form class="section-chat-form" id="student-chat-form">
+              <label class="visually-hidden" for="student-chat-message">Message to section</label>
+              <textarea id="student-chat-message" rows="2" maxlength="1000" placeholder="Write a message to your section" required></textarea>
+              <button class="student-action" type="submit">Send</button>
+            </form>
+            <p class="student-chat-note">Messages are saved on this device. Cloud chat requires school account sign-in.</p>
+          </section>
+        </div>
+        </div>
+        <section class="student-settings-view" id="student-settings-view" aria-labelledby="student-settings-title" hidden>
+          <div class="student-settings-heading">
+            <div>
+              <p class="student-eyebrow">STUDENT PORTAL</p>
+              <h1 id="student-settings-title" tabindex="-1">Settings</h1>
+            </div>
+            <button class="student-settings-back" id="student-settings-back" type="button">Back</button>
+          </div>
+          <section class="student-settings-panel" aria-labelledby="student-identity-title">
+            <h2 id="student-identity-title">Identity Information</h2>
+            <dl class="student-identity-list">
+              <div><dt>Full name</dt><dd id="settings-student-name">—</dd></div>
+              <div><dt>Learner Reference Number</dt><dd id="settings-student-lrn">—</dd></div>
+              <div><dt>Email address</dt><dd id="settings-student-email">Not provided</dd></div>
+              <div><dt>Account</dt><dd>Local preview account</dd></div>
+            </dl>
+          </section>
+          <section class="student-settings-panel" aria-labelledby="student-display-title">
+            <h2 id="student-display-title">Appearance</h2>
+            <label class="theme-setting-row" for="student-theme-toggle">
+              <span><strong>Dark mode</strong><small>Use a darker color theme on both portals.</small></span>
+              <input id="student-theme-toggle" type="checkbox" role="switch" />
+            </label>
+          </section>
+          <section class="student-settings-panel" aria-labelledby="student-notification-settings-title">
+            <h2 id="student-notification-settings-title">Browser Permissions</h2>
+            <h3>Notifications</h3>
+            <p class="device-notification-description">Receive due-date reminders and teacher chat messages on this device while the student portal is open.</p>
+            <p class="device-notification-status" id="student-device-notification-status" role="status" aria-live="polite"></p>
+            <div class="device-notification-actions">
+              <button class="student-settings-back notification-permission-button" id="student-enable-notifications" type="button">Enable Notifications</button>
+              <button class="student-settings-back notification-test-button" id="student-test-notification" type="button" disabled>Send Test Notification</button>
+            </div>
+          </section>
+          <section class="student-settings-panel student-logout-panel" aria-labelledby="student-account-title">
+            <div><h2 id="student-account-title">Account</h2><p>End this local student session.</p></div>
+            <button class="student-logout-button" id="student-logout" type="button">Log Out</button>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

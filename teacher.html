@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45151f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Teacher portal welcome page." data-brand-description="teacherDescription" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title data-brand-title="teacherPageTitle">Teacher Portal | EAPIHS</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="teacher.css?v=20261044" />
+    <script src="branding-config.js" defer></script>
+    <script src="branding.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="integrations-config.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="storage.js" defer></script>
+    <script src="teacher.js?v=20261044" defer></script>
+    <script src="pwa.js" defer></script>
+  </head>
+  <body hidden>
+    <div class="page-shell">
+      <header class="topbar teacher-topbar">
+        <a class="school-brand" href="teacher.html" data-brand-aria="teacherPortal">
+          <span class="school-seal" data-brand-logo aria-hidden="true">EAPIHS</span>
+          <span class="school-copy">
+            <strong data-brand="fullName">Emilia Ambalada Poblete Integrated Highschool</strong>
+            <span data-brand="productName">School Management &amp; Grading System</span>
+          </span>
+        </a>
+        <div class="teacher-account">
+          <span class="teacher-avatar" aria-hidden="true">MR</span>
+          <span class="teacher-identity"><strong>Ms. Reyes</strong><small>Teacher</small></span>
+          <button class="signout-link header-settings-link" id="header-settings" type="button">Settings</button>
+        </div>
+      </header>
+
+      <main class="teacher-main">
+        <section class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title">
+          <div class="welcome-seal" data-brand-logo aria-hidden="true">EAPIHS</div>
+          <p class="welcome-eyebrow">TEACHER PORTAL</p>
+          <h1 id="welcome-title">Welcome, Ms. Reyes!</h1>
+          <p class="welcome-message" data-brand="welcomeMessage">Welcome to the EAPIHS School Management &amp; Grading System.</p>
+          <button class="welcome-button" id="welcome-continue" type="button">Thank you</button>
+        </section>
+        <section class="empty-dashboard" id="teacher-dashboard" aria-label="Teacher dashboard" tabindex="-1" hidden>
+          <div class="control-center">
+            <div class="control-center-title">
+              <span class="control-center-icon" aria-hidden="true">▣</span>
+              <div>
+                <h2>Teacher Control Center</h2>
+                <p>Official DepEd Grading &amp; Class Management</p>
+              </div>
+            </div>
+            <nav class="control-center-actions" aria-label="Teacher tools">
+              <button class="control-action qr-action" id="open-qr-scanner" type="button">
+                <span aria-hidden="true">▦</span> QR Scanner
+              </button>
+              <button class="control-action sections-action" id="open-sections" type="button">
+                <span aria-hidden="true">▤</span> Sections
+              </button>
+            </nav>
+          </div>
+          <section class="qr-scanner-view" id="qr-scanner-view" aria-labelledby="qr-scanner-title" hidden>
+            <div class="sections-heading">
+              <div>
+                <p class="sections-eyebrow">TEACHER CONTROL CENTER</p>
+                <h2 id="qr-scanner-title" tabindex="-1">Student QR Scanner</h2>
+              </div>
+              <button class="secondary-action" id="close-qr-scanner" type="button">Back</button>
+            </div>
+            <div class="qr-scanner-workspace">
+              <video id="qr-camera" class="qr-camera" playsinline muted aria-label="Live student QR camera view" hidden></video>
+              <p class="qr-scanner-status" id="qr-scanner-status" role="status" aria-live="polite">Start the camera or enter the student's LRN.</p>
+              <div class="qr-manual-entry">
+                <label for="qr-student-lrn">STUDENT LRN OR QR VALUE</label>
+                <div>
+                  <input id="qr-student-lrn" type="text" maxlength="40" placeholder="12-digit LRN or EAPIHS-LRN-..." />
+                  <button class="add-section-action" id="find-qr-student" type="button">Find Student</button>
+                </div>
+              </div>
+              <div class="qr-scanner-actions">
+                <button class="add-section-action" id="start-qr-camera" type="button">Start Camera</button>
+                <button class="secondary-action" id="stop-qr-camera" type="button" disabled>Stop Camera</button>
+              </div>
+              <ul class="qr-section-choices" id="qr-section-choices" aria-label="Sections containing this student" hidden></ul>
+            </div>
+          </section>
+          <section class="qr-student-record" id="qr-student-record" aria-labelledby="qr-record-title" hidden>
+            <div class="sections-heading">
+              <div>
+                <p class="sections-eyebrow" id="qr-record-section"></p>
+                <h2 id="qr-record-title" tabindex="-1">Student Class Record</h2>
+                <p class="qr-record-student" id="qr-record-student"></p>
+              </div>
+              <button class="secondary-action" id="back-from-qr-record" type="button">Back to Scanner</button>
+            </div>
+            <ul class="qr-activity-list" id="qr-activity-list" aria-label="Student activity completion statuses"></ul>
+            <p class="qr-record-empty" id="qr-record-empty" hidden>No activities have been configured for this section.</p>
+          </section>
+          <section class="settings-view" id="settings-view" aria-labelledby="settings-title" hidden>
+            <div class="settings-heading">
+              <div>
+                <p class="sections-eyebrow">TEACHER CONTROL CENTER</p>
+                <h2 id="settings-title" tabindex="-1">Settings</h2>
+              </div>
+              <button class="secondary-action" id="back-to-settings-dashboard" type="button">Back</button>
+            </div>
+            <form class="settings-form" id="settings-form">
+              <section class="settings-panel" aria-labelledby="profile-settings-title">
+                <h3 id="profile-settings-title">Identity Information</h3>
+                <label for="settings-teacher-name">Teacher name</label>
+                <input id="settings-teacher-name" type="text" value="Ms. Reyes" />
+                <div class="teacher-identity-details">
+                  <span>Account type</span><strong>Teacher</strong>
+                  <span>Email address</span><strong id="settings-teacher-email">Not connected</strong>
+                  <span>Account status</span><strong>Local preview account</strong>
+                </div>
+                <label for="settings-school-year">School year</label>
+                <input id="settings-school-year" type="text" placeholder="2026 - 2027" />
+              </section>
+              <section class="settings-panel" aria-labelledby="display-settings-title">
+                <h3 id="display-settings-title">Appearance</h3>
+                <label class="settings-toggle">
+                  <input id="settings-dark-mode" type="checkbox" role="switch" />
+                  <span>Dark mode across teacher and student portals</span>
+                </label>
+                <h3>Browser Permissions</h3>
+                <h4>Notifications</h4>
+                <p class="device-notification-description">Receive section chat replies on this device while the teacher portal is open.</p>
+                <p class="device-notification-status" id="teacher-device-notification-status" role="status" aria-live="polite"></p>
+                <div class="device-notification-actions">
+                  <button class="secondary-action notification-permission-button" id="teacher-enable-notifications" type="button">Enable Notifications</button>
+                  <button class="secondary-action notification-test-button" id="teacher-test-notification" type="button" disabled>Send Test Notification</button>
+                </div>
+                <h4>Camera</h4>
+                <p class="device-notification-description">Camera access is used only when you scan a student QR code.</p>
+                <p class="device-notification-status" id="teacher-camera-permission-status" role="status" aria-live="polite"></p>
+                <div class="device-notification-actions">
+                  <button class="secondary-action" id="teacher-enable-camera" type="button">Request Camera Access</button>
+                </div>
+                <label class="settings-toggle">
+                  <input id="settings-camera-reminder" type="checkbox" checked />
+                  <span>Show reminders when camera evidence is missing</span>
+                </label>
+                <label class="settings-toggle">
+                  <input id="settings-compact-table" type="checkbox" />
+                  <span>Use compact gradebook rows</span>
+                </label>
+              </section>
+              <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
+              <button class="add-section-action" type="submit">Save Settings</button>
+            </form>
+            <section class="settings-account" aria-labelledby="account-settings-title">
+              <div>
+                <h3 id="account-settings-title">Account</h3>
+                <p>End the current local teacher session.</p>
+              </div>
+              <button class="logout-button" id="logout-button" type="button">Log out</button>
+            </section>
+          </section>
+          <section class="evidence-view" id="evidence-view" aria-labelledby="evidence-title" hidden>
+            <div class="evidence-heading">
+              <div>
+                <p class="sections-eyebrow">TEACHER CONTROL CENTER</p>
+                <h2 id="evidence-title" tabindex="-1">Camera Evidence Checker</h2>
+              </div>
+              <button class="secondary-action" id="back-to-evidence-dashboard" type="button">Back</button>
+            </div>
+            <div class="evidence-workspace">
+              <section class="evidence-camera-panel" aria-labelledby="capture-title">
+                <h3 id="capture-title">Student work photo</h3>
+                <label class="camera-capture" for="evidence-photo">
+                  <span aria-hidden="true">◉</span>
+                  <strong>Take photo or choose image</strong>
+                  <small>Use the iPad camera or a saved photo</small>
+                </label>
+                <input id="evidence-photo" type="file" accept="image/*" capture="environment" />
+                <img id="evidence-preview" class="evidence-preview" alt="Captured student work preview" hidden />
+              </section>
+
+              <form class="evidence-form" id="evidence-form">
+                <label for="evidence-section">SECTION</label>
+                <select id="evidence-section" required>
+                  <option value="">Select section</option>
+                </select>
+
+                <label for="evidence-student">STUDENT / LRN</label>
+                <select id="evidence-student" required disabled>
+                  <option value="">Select section first</option>
+                </select>
+
+                <div class="evidence-form-grid">
+                  <div>
+                    <label for="evidence-category">ACTIVITY TYPE</label>
+                    <select id="evidence-category" required>
+                      <option value="WW">Written / Oral Work (WW)</option>
+                      <option value="PT">Performance Task (PT)</option>
+                      <option value="ST">Summative Test (ST)</option>
+                      <option value="TE">Term Exam (TE)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="evidence-number">ACTIVITY NUMBER</label>
+                    <input id="evidence-number" type="number" min="1" max="20" value="1" required />
+                  </div>
+                </div>
+
+                <div class="evidence-form-grid">
+                  <div>
+                    <label for="evidence-max-score">HIGHEST SCORE</label>
+                    <input id="evidence-max-score" type="number" min="1" step="any" value="10" required />
+                  </div>
+                  <div>
+                    <label for="evidence-awarded-score">TEACHER SCORE</label>
+                    <input id="evidence-awarded-score" type="number" min="0" step="any" required />
+                  </div>
+                </div>
+                <p class="evidence-score-note">The photo is saved as score evidence. The teacher-confirmed score and highest score are copied to the selected activity in the Class Record, where the score remains editable.</p>
+                <p class="evidence-status" id="evidence-status" role="status" aria-live="polite"></p>
+                <button class="add-section-action evidence-save" type="submit">Save Evidence &amp; Score</button>
+              </form>
+            </div>
+
+            <section class="evidence-records" aria-labelledby="evidence-records-title">
+              <h3 id="evidence-records-title">Saved evidence</h3>
+              <ul id="evidence-record-list"></ul>
+            </section>
+          </section>
+          <section class="sections-view" id="sections-view" aria-labelledby="sections-title" hidden>
+            <div class="sections-heading">
+              <div>
+                <p class="sections-eyebrow">TEACHER CONTROL CENTER</p>
+                <h2 id="sections-title" tabindex="-1">My Sections</h2>
+              </div>
+              <div class="sections-heading-actions">
+                <button class="secondary-action" id="back-to-control-center" type="button">Back</button>
+                <button class="add-section-action" id="add-section" type="button">
+                  <span aria-hidden="true">+</span> Add Section
+                </button>
+              </div>
+            </div>
+            <p class="storage-note">Sections are saved in this browser on this device.</p>
+            <p class="section-status" id="section-status" role="status" aria-live="polite"></p>
+            <p class="sections-empty" id="sections-empty">There are no sections yet. Select Add Section to create one.</p>
+            <ul class="section-list" id="section-list" aria-label="Saved sections"></ul>
+          </section>
+          <section class="section-dashboard-view" id="section-dashboard-view" aria-labelledby="section-dashboard-title" tabindex="-1" hidden>
+            <div class="section-dashboard-heading">
+              <div>
+                <p class="sections-eyebrow" id="section-dashboard-grade"></p>
+                <h2 id="section-dashboard-title" tabindex="-1"></h2>
+                <p class="section-id-display">Section ID: <strong id="section-dashboard-id">—</strong></p>
+              </div>
+              <div class="section-dashboard-actions">
+                <button class="evidence-action" id="open-section-evidence" type="button">Camera Evidence Tool</button>
+                <button class="secondary-action" id="back-to-sections" type="button">Back to Sections</button>
+              </div>
+            </div>
+            <section class="section-enrollment" aria-labelledby="enrollment-title">
+              <div>
+                <p class="sections-eyebrow">SECTION STUDENTS</p>
+                <h3 id="enrollment-title">Add or view students</h3>
+              </div>
+              <form id="add-section-student-form" class="add-section-student-form">
+                <label for="section-student-code">LRN OR QR CODE</label>
+                <div>
+                  <input id="section-student-code" type="text" maxlength="40" placeholder="LRN or EAPIHS-LRN-..." required />
+                  <button class="add-section-action" type="submit">Add Student</button>
+                </div>
+              </form>
+              <div class="class-list-import">
+                <label for="class-list-paste">PASTE CLASS LIST OR STUDENT NAMES</label>
+                <textarea id="class-list-paste" rows="4" placeholder="Copy rows from Excel/Sheets, then paste here. Include Name and LRN columns."></textarea>
+                <div class="class-list-import-actions">
+                  <button class="add-section-action" id="import-pasted-list" type="button">Import pasted list</button>
+                  <label class="file-import-label" for="class-list-file">Choose file</label>
+                  <input id="class-list-file" type="file" accept=".csv,.tsv,.txt,.xls,.xlsx,image/png,image/jpeg,image/webp" />
+                </div>
+                <p>Supported: Excel, CSV, TSV, TXT, and images. Include a 12-digit LRN for each student. You can paste a copied table or image here.</p>
+              </div>
+              <img class="class-list-preview" id="class-list-preview" alt="Uploaded class list preview" hidden />
+              <p class="student-enrollment-status" id="student-enrollment-status" role="status" aria-live="polite"></p>
+              <ul class="section-enrollment-list" id="section-enrollment-list"></ul>
+            </section>
+            <nav class="term-dashboard-tabs" id="term-dashboard-tabs" aria-label="Term dashboards" role="tablist">
+              <button class="term-dashboard-tab" id="term-tab-1" type="button" role="tab" aria-selected="true" aria-controls="term-dashboard-panel" data-term="1">Term 1</button>
+              <button class="term-dashboard-tab" id="term-tab-2" type="button" role="tab" aria-selected="false" aria-controls="term-dashboard-panel" data-term="2" tabindex="-1">Term 2</button>
+              <button class="term-dashboard-tab" id="term-tab-3" type="button" role="tab" aria-selected="false" aria-controls="term-dashboard-panel" data-term="3" tabindex="-1">Term 3</button>
+            </nav>
+            <section class="gradebook" id="term-dashboard-panel" role="tabpanel" aria-labelledby="term-tab-1" aria-label="Term 1 grade record">
+              <div class="print-record-header">
+                <div class="print-record-brand">
+                  <span class="print-school-seal" data-brand-logo aria-hidden="true">EAPIHS</span>
+                  <div>
+                    <p data-brand="fullName">EMILIA AMBALADA POBLETE INTEGRATED HIGHSCHOOL</p>
+                    <h2 id="print-record-title">CLASS RECORD - TERM 1</h2>
+                    <strong id="print-record-term-label">FIRST TERM</strong>
+                  </div>
+                  <span class="print-deped-mark">DepEd</span>
+                </div>
+                <div class="print-record-identifiers">
+                  <label>REGION <input id="print-region" type="text" value="" placeholder="Enter region" /></label>
+                  <label>DIVISION <input id="print-division" type="text" value="" placeholder="Enter division" /></label>
+                  <label>SCHOOL ID <input id="print-school-id" type="text" value="" placeholder="Enter school ID" /></label>
+                  <label>SCHOOL YEAR <input id="print-school-year" type="text" value="" placeholder="2026 - 2027" /></label>
+                </div>
+                <button class="secondary-action print-record-button" id="print-class-record" type="button" title="Print current term class record">Print Class Record</button>
+              </div>
+              <div class="gradebook-meta">
+                <label>GRADE AND SECTION
+                  <input id="gradebook-section" type="text" readonly />
+                </label>
+                <label>TEACHER
+                  <input id="gradebook-teacher" type="text" value="Ms. Reyes" />
+                </label>
+                <label>SUBJECT
+                  <input id="gradebook-subject" type="text" placeholder="Enter subject" />
+                </label>
+              </div>
+              <div class="gradebook-activity-settings" aria-label="Assessment activity counts">
+                <label class="activity-count-control" for="activity-count-ww">
+                  <span>WW ACTIVITIES</span>
+                  <input id="activity-count-ww" data-activity-count="ww" type="number" min="1" max="20" value="5" />
+                </label>
+                <label class="activity-count-control" for="activity-count-pt">
+                  <span>PT ACTIVITIES</span>
+                  <input id="activity-count-pt" data-activity-count="pt" type="number" min="1" max="20" value="3" />
+                </label>
+                <label class="activity-count-control" for="activity-count-st">
+                  <span>ST ACTIVITIES</span>
+                  <input id="activity-count-st" data-activity-count="st" type="number" min="1" max="20" value="2" />
+                </label>
+                <label class="activity-count-control" for="activity-count-te">
+                  <span>TERM EXAMS</span>
+                  <input id="activity-count-te" data-activity-count="te" type="number" min="1" max="20" value="1" />
+                </label>
+                <label class="activity-count-control weight-control" for="weight-ww">
+                  <span>WW WEIGHT (%)</span>
+                  <input id="weight-ww" type="number" min="0" max="100" step="0.1" value="20" />
+                </label>
+                <label class="activity-count-control weight-control" for="weight-pt">
+                  <span>PT WEIGHT (%)</span>
+                  <input id="weight-pt" type="number" min="0" max="100" step="0.1" value="50" />
+                </label>
+                <label class="activity-count-control weight-control" for="weight-qa">
+                  <span>QA WEIGHT (%)</span>
+                  <input id="weight-qa" type="number" min="0" max="100" step="0.1" value="30" />
+                </label>
+              </div>
+              <p class="gradebook-config-note">Activity totals, percentage scores, weighted scores, and initial grade calculate automatically. The teacher enters and decides each learner's final Term Grade. WW, PT, and QA weights must total 100%.</p>
+              <p class="gradebook-config-status" id="gradebook-config-status" role="status" aria-live="polite"></p>
+              <section class="activity-deadlines" aria-labelledby="activity-deadlines-title">
+                <div class="activity-deadlines-heading">
+                  <div>
+                    <h3 id="activity-deadlines-title">Activity due dates</h3>
+                    <p>Set a deadline for each activity. Students will see alerts for incomplete work.</p>
+                  </div>
+                </div>
+                <div class="activity-deadline-list" id="activity-deadline-list"></div>
+              </section>
+              <div class="gradebook-scroll" role="region" aria-label="Scrollable term grade sheet" tabindex="0">
+                <table class="gradebook-table">
+                  <thead id="gradebook-head"></thead>
+                  <tbody id="gradebook-body"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="section-chat" aria-labelledby="teacher-chat-title">
+              <div class="section-chat-heading">
+                <div>
+                  <p class="sections-eyebrow">SECTION COMMUNICATION</p>
+                  <h3 id="teacher-chat-title">Section Group Chat</h3>
+                </div>
+                <span class="chat-mode-badge" id="teacher-chat-mode">This device</span>
+              </div>
+              <ul class="section-chat-messages" id="teacher-chat-messages" aria-live="polite"></ul>
+              <form class="section-chat-form" id="teacher-chat-form">
+                <label class="visually-hidden" for="teacher-chat-message">Message to section</label>
+                <textarea id="teacher-chat-message" rows="2" maxlength="1000" placeholder="Write a message to this section" required></textarea>
+                <button class="add-section-action" type="submit">Send</button>
+              </form>
+            </section>
+          </section>
+        </section>
+      </main>
+
+      <dialog class="section-dialog" id="section-dialog" aria-labelledby="section-dialog-title">
+        <form class="section-form" id="section-form">
+          <div class="dialog-heading">
+            <p class="sections-eyebrow">TEACHER CONTROL CENTER</p>
+            <h2 id="section-dialog-title">Add Section</h2>
+          </div>
+          <label for="section-grade">GRADE LEVEL</label>
+          <select id="section-grade" name="grade" required>
+            <option value="">Select grade level</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+          <label for="section-name">SECTION NAME</label>
+          <input id="section-name" name="name" type="text" maxlength="60" placeholder="e.g. Rizal" required />
+          <div class="dialog-actions">
+            <button class="secondary-action" id="cancel-section" type="button">Cancel</button>
+            <button class="add-section-action" type="submit">Save Section</button>
+          </div>
+        </form>
+      </dialog>
+
+      <footer class="footer teacher-footer">
+        <span data-brand="copyright">&copy; 2026 Emilia Ambalada Poblete Integrated Highschool</span>
+        <span class="footer-accent" data-brand="productName">School Management &amp; Grading System</span>
+      </footer>
+    </div>
+  </body>
+</html>
