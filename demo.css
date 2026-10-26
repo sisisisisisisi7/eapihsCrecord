@@ -1,0 +1,21 @@
+.demo-data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.demo-data-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+  .demo-data-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .demo-data-actions button {
+    width: 100%;
+  }
+}
