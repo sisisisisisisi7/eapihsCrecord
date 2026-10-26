@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45151f" />
+    <title data-brand-title="demoPageTitle">EAPIHS Demo Sandbox</title>
+    <link rel="icon" href="../app/assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../app/styles.css" />
+    <link rel="stylesheet" href="../app/teacher.css?v=20261044" />
+    <link rel="stylesheet" href="demo.css" />
+    <script src="../app/branding-config.js" defer></script>
+    <script src="../app/branding.js" defer></script>
+    <script src="../app/storage.js" defer></script>
+    <script src="demo.js?v=20261044" defer></script>
+  </head>
+  <body>
+    <div class="page-shell demo-sandbox-shell">
+      <header class="topbar">
+        <a class="school-brand" href="../app/index.html" aria-label="Return to production portal">
+          <span class="school-seal" data-brand-logo aria-hidden="true">EAPIHS</span>
+          <span class="school-copy">
+            <strong data-brand="fullName">Emilia Ambalada Poblete Integrated Highschool</strong>
+            <span>DEMO SANDBOX · SAMPLE DATA ONLY</span>
+          </span>
+        </a>
+        <a class="demo-production-link" href="../app/index.html">Open Main App</a>
+      </header>
+
+      <main class="demo-sandbox-main">
+        <section class="demo-sandbox-heading" aria-labelledby="demo-title">
+          <div>
+            <p class="sections-eyebrow">SEPARATE TEST ENVIRONMENT</p>
+            <h1 id="demo-title" data-brand="demoTitle">EAPIHS Demo Sandbox</h1>
+            <p>The sandbox uses separate browser storage from the production portal. Loading sample data never overwrites production records; Remove Demo clears the demo's sample data and restores any earlier sandbox state.</p>
+          </div>
+          <div class="demo-data-actions">
+            <button class="add-section-action" id="load-demo-data" type="button">Load Demo</button>
+            <button class="secondary-action" id="remove-demo-data" type="button" disabled>Remove Demo</button>
+          </div>
+          <p class="demo-sandbox-status" id="demo-data-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="demo-sandbox-checklist" aria-labelledby="demo-includes-title">
+          <h2 id="demo-includes-title">Included sample data</h2>
+          <ul>
+            <li>Grade 7 DEMO - Rizal section with three students</li>
+            <li>Term 1 scores, component weights, computed initial grades, and final Term Grades</li>
+            <li>Sample activity due dates, overdue alert, and section chat thread</li>
+            <li>Student QR identity and sample camera evidence image</li>
+          </ul>
+          <p>When loaded, open <a href="../app/teacher.html?demo=1">Teacher Portal</a> and <a href="../app/student.html?demo=1">Student Portal</a> in another tab to explore the workflows.</p>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>Demo data only. Do not use this sandbox for live student records.</span>
+        <a href="../app/index.html">Return to Main App</a>
+      </footer>
+    </div>
+  </body>
+</html>
